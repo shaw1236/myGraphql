@@ -1,4 +1,4 @@
--- Test in curl 
+# Test using curl 
 
 - Query the messages - getMessageList
 
