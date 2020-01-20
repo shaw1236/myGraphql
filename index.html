@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            async function api(iv_query) {
+                 const server = "http://localhost:4000"; 
+                 const url = `${server}/graphql`;
+                 const query = {"query": iv_query};
+                 const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(query),
+                    //credentials: 'include',
+                })
+                const body = await res.json();  
+                return body;             
+            }
+
+            async function onGetMessageList(e) {
+                e.preventDefault();
+                const body = await api("query { getMessageList{id author content} }");
+                body.data.getMessageList.map(message=> console.log(message));
+                alert(JSON.stringify(body.data.getMessageList));
+            }
+     
+            async function onGetMessage(e) {
+                e.preventDefault();
+                const id = Number(document.getElementById('getMessage-id').value);
+                const body = await api("query { getMessageList{id author content} }");  
+
+                console.log(body.data.getMessage);
+                alert(JSON.stringify(body.data.getMessage));
+            }
+
+            async function onCreateMessage(e) {
+                e.preventDefault();
+                const author = document.getElementById('createMessage-author').value;
+                const content = document.getElementById('createMessage-content').value;
+                const body = await api(`mutation { createMessage(author: "${author}", content: "${content}") {id author content} }`);  
+
+                console.log(body.data.createMessage);
+                alert(JSON.stringify(body.data.createMessage));
+            }
+              
+            async function onUpdateMessage(e) {
+                e.preventDefault()
+                const id = document.getElementById('updateMessage-id').value;
+                const author = document.getElementById('updateMessage-author').value;
+                const content = document.getElementById('updateMessage-content').value;
+                const body = await api(`mutation { updateMessage(id: ${id}, content: "${content}", author: "${author}") }`);
+
+                console.log(body.data.updateMessage);
+                alert(JSON.stringify(body.data.updateMessage));
+            }
+            
+            async function onDeleteMessage(e) {
+                e.preventDefault()
+                const id = document.getElementById('deleteMessage-id').value;
+                const body = await api(`mutation { deleteMessage(id: ${id}) }`);
+
+                console.log(body.data.deleteMessage);
+                alert(JSON.stringify(body.data.deleteMessage));
+            }
+            
+            function render() {
+                document.getElementById('app').innerHTML = `
+                    <h1> graphql API Test </h1>
+                    <div>
+                        <h2>get Message List</h2>
+                        <form onsubmit="onGetMessageList(event)">
+                            <button>getMessageList</button>
+                        </form>
+                    </div>
+                    <hr>
+                    <div>
+                        <h2>get Message</h2>
+                        <form onsubmit="onGetMessage(event)">
+                            <div><label>Id&nbsp;&nbsp;<input id="getMessage-id" type="number" min="1" required/></label></div>
+                            <button>getMessage</button>
+                        </form>
+                    </div>
+                    <hr>
+                    <div>
+                        <h2>create Message</h2>    
+                        <form onsubmit="onCreateMessage(event)">
+                            <div><label>Author&nbsp;<input id="createMessage-author" type="text"/></label></div>
+                            <div><label>Content&nbsp;<input id="createMessage-content" type="text"/></label></div>
+                            <button>createMessage</button>
+                        </form>
+                    </div>
+                    <hr>
+                    <div>
+                        <h2>update Message</h2>
+                        <form onsubmit="onUpdateMessage(event)">
+                            <div><label>Id&emsp;<input id="updateMessage-id" type="number" required/></label></div>
+                            <div><label>Author&nbsp;<input id="updateMessage-author" type="text"/></label></div>
+                            <div><label>Content&nbsp;<input id="updateMessage-content" type="text"/></label></div>
+                            <button>updateMessage</button>
+                        </form>
+                    </div>
+                    <hr>
+                    <div>
+                        <h2>delete Message</h2>
+                        <form onsubmit="onDeleteMessage(event)">
+                            <div><label>Id&emsp;<input id="deleteMessage-id" type="number" required/></label></div>
+                            <button>deleteMessage</button>
+                        </form>
+                    </div>
+                `      
+            }
+        </script>
+    </head>
+    <body>
+        <div id="app"></div>
+        <script>render()</script>
+    </body>
+</html>
