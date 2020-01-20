@@ -1,12 +1,8 @@
--- Installation
+# Installation
+* Get the repo - $git clone https://github.com/shaw1236/myGraphql.git
+* run installation - $npm install
 
-* Get the repo from
-
-* run $npm install
-
--- Start the server
-
+# Start the server
 * $npm start
-
 * Test with curl, postman or index.html
  
